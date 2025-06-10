@@ -1,23 +1,11 @@
 const express = require('express');
-const categoryController = require('../controller/categoryController');
-const database = require('./config/database');
+const CategoryController = require('../controllers/categoryController');
+const router = express.Router;
 
-console.log('Starting server....')
-const app = express()
-app.use(express.json())
+router.post('/', CategoryController.createCategory);
+router.get('/', CategoryController.listCategories);
+router.get('/:id', CategoryController.findById);
+router.put('/:id', CategoryController.updateCategory);
+router.delete('/:id', CategoryController.deleteCategory);
 
-app.get('/', (req, res) => {
-    res.send({ response: 'Starting Page!' });
-})
-app.post('/category', categoryController.category);
-
-
-database.db.sync({ force: false })
-    .then(() => {
-        app.listen(3000, () => {
-            console.log('Server is running on port 3000')
-        })
-    })
-    .catch((error) => {
-        console.error('Error connecting to the database', error);
-    });
+module.exports = Router;

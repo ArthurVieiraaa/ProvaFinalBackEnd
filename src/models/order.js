@@ -1,5 +1,6 @@
 const database = require("../config/database");
 const User = require("../models/user");
+const Product = require("../models/product");
 
 class Order {
     constructor() {
@@ -16,5 +17,3 @@ class Order {
 }
 
 module.exports = new Order().model;
-
-// a
