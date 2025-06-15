@@ -1,27 +1,26 @@
-const { Order, Products, User } = require("../models/order");
+const Order = require("../models/order");
 
 class OrderController {
-    async createOrder(req, res) {
-        const userId = req.body.userId;
-        const productId = req.body.productId;
+    static async createOrder(req, res) {
+        const { idUser, products } = req.body;
         try {
-            const order = await Order.create(userId, productId);
-            return res.status(201).json({ success: true, message: 'Pedido criado com sucesso', order });
+            const order = await Order.create({ idUser, products });
+            res.status(201).json({ message: 'Pedido criada com sucesso', order });
         } catch (error) {
-            return res.status(400).json({ error: 'Erro ao criar pedido' });
+            res.status(500).json({ error: 'Erro ao criar pedidos', detalhes: error.message });
         }
     }
 
-    async listOrders(req, res) {
+    static async listOrders(req, res) {
         try {
-            const orders = await listOrders();
+            const orders = await Order.findAll();
             return res.status(200).json(orders);
         } catch (error) {
             return res.status(400).json({ error: 'Erro ao listar pedidos' });
         }
     }
 
-    async findById(req, res) {
+    static async findById(req, res) {
         const id = req.params.id;
         try {
             const order = await findOrderById(id);
@@ -31,7 +30,7 @@ class OrderController {
         }
     }
 
-    async updateOrder(req, res) {
+    static async updateOrder(req, res) {
         const id = req.params.id;
         const { userId, productId } = req.body;
         try {
@@ -42,7 +41,7 @@ class OrderController {
         }
     }
 
-    async deleteOrder(req, res) {
+    static async deleteOrder(req, res) {
         const id = req.params.id;
         try {
             await deleteOrder(Number(id));
@@ -53,4 +52,4 @@ class OrderController {
     }
 }
 
-module.exports = new OrderController();
+module.exports = OrderController;

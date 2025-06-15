@@ -1,59 +1,85 @@
-const { Product, Category } = require('../models/product');
+const Product = require('../models/product');
+const Category = require('../models/category');
 
 class ProductController {
-    async createProduct(req, res) {
-        const name = req.body.name;
-        const price = req.body.price;
-        const categoryId = req.body.categoryId;
+    static async createProduct(req, res) {
         try {
-            const product = await Product.create({ name, price, categoryId });
-            return res.status(201).json({ success: true, message: 'Produto criado com sucesso', product });
-        } catch (error) {
+            const name = req.body.name;
+            const price = req.body.price;
+            const idCategory = req.body.idCategory;
+            const newProduct = await Product.create({ name, price, idCategory });
+            return res.status(201).json(newProduct);
+        }
+        catch (error) {
+            console.error(error);
             return res.status(400).json({ error: 'Erro ao criar produto' });
         }
     }
 
-    async listProducts(req, res) {
+    static async listProducts(req, res) {
         try {
-            const products = await listProducts({
-                include: [{ model: Category, as: 'category' }]
+            const products = await Product.findAll({
+                include: [{ model: Category }]
             });
             return res.status(200).json(products);
         } catch (error) {
-            return res.status(400).json({ error: 'Erro ao listar produtos' });
+            console.error(error);
+            return res.status(500).json({ error: 'Erro ao listar produtos' });
         }
     }
 
-    async findById(req, res) {
+    static async findById(req, res) {
         const id = req.params.id;
         try {
-            const product = await findById()
+            const product = await Product.findByPk(id, {
+                include: [{ model: Category }]
+            });
+
+            if (!product) {
+                return res.status(404).json({ error: 'Produto não encontrado' });
+            }
+
             return res.status(200).json(product);
         } catch (error) {
+            console.error(error);
             return res.status(400).json({ error: 'Erro ao buscar produto' });
         }
     }
 
-    async updateProduct(req, res) {
+    static async updateProduct(req, res) {
         const id = req.params.id;
-        const { name, price, categoryId } = req.body;
+        const { name, price, idCategory } = req.body;
+
         try {
-            const product = await updateProduct(Number(id), name, price, categoryId);
-            return res.status(200).send(product);
+            const product = await Product.findByPk(id);
+            if (!product) {
+                return res.status(404).json({ error: 'Produto não encontrado' });
+            }
+
+            await product.update({ name, price, idCategory });
+            return res.status(200).json(product);
         } catch (error) {
+            console.error(error);
             return res.status(400).json({ error: 'Erro ao atualizar produto' });
         }
     }
 
-    async deleteProduct(req, res) {
+    static async deleteProduct(req, res) {
         const id = req.params.id;
+
         try {
-            await deleteProduct(Number(id));
-            return res.status(200).send({ success: true, message: 'Produto deletado com sucesso' });
+            const product = await Product.findByPk(id);
+            if (!product) {
+                return res.status(404).json({ error: 'Produto não encontrado' });
+            }
+
+            await product.destroy();
+            return res.status(200).json({ success: true, message: 'Produto deletado com sucesso' });
         } catch (error) {
+            console.error(error);
             return res.status(400).json({ error: 'Erro ao deletar produto' });
         }
     }
 }
 
-module.exports = new ProductController();
+module.exports = ProductController;

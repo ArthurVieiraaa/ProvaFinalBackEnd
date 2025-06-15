@@ -13,10 +13,13 @@ class Product {
                 type: database.db.Sequelize.STRING
             },
             price: {
-                type: database.db.Sequelize.FLOAT
+                type: database.db.Sequelize.DECIMAL(10, 2)
+            },
+            idCategory: {
+                type: database.db.Sequelize.INTEGER
             }
         });
-        this.model.belongsTo(Category, { foreignKey: 'idCategory' });
+       this.model.belongsTo(Category, { foreignKey: 'idCategory' });
     }
 }
 

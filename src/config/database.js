@@ -7,7 +7,8 @@ class Database {
             'root',
             '',
             { host: 'localhost', dialect: 'mysql' }
-        )
+        );
+        this.port = 3001;
     }
 }
 

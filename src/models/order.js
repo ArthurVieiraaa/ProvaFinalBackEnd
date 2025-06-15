@@ -5,15 +5,23 @@ const Product = require("../models/product");
 class Order {
     constructor() {
         this.model = database.db.define('orders', {
-            id: {
+            idOrder: {
                 type: database.db.Sequelize.INTEGER,
                 primaryKey: true,
-                autoIncrement: true
+                autoIncrement: true,
+            },
+            idUser: {
+                type: database.db.Sequelize.INTEGER,
+                allowNull: false,
+            },
+            total: {
+                type: database.db.Sequelize.DECIMAL(10, 2),
+                allowNull: false,
             }
         });
         this.model.belongsTo(User, { foreignKey: 'idUser' });
-        this.model.belongsTo(Product, { foreignKey: 'nameProduct' });
+        this.model.belongsToMany(Product, { through: 'OrderProduct', foreignKey: 'idOrder' });
     }
 }
 
-module.exports = new Order().model;
+module.exports = Order;

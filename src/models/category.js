@@ -2,7 +2,7 @@ const database = require("../config/database");
 
 class Category {
     constructor() {
-        this.model = database.db.define('categorys', {
+        this.model = database.db.define('categories', {
             id: {
                 type: database.db.Sequelize.INTEGER,
                 primaryKey: true,
