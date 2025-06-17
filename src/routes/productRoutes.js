@@ -157,6 +157,8 @@
 const express = require('express');
 const ProductController = require('../controllers/productController');
 const router = express.Router();
+const isAuthenticated = require('../middlewares/auth');
+router.use(isAuthenticated); 
 
 router.post('/', ProductController.createProduct);
 router.get('/', ProductController.listProducts);

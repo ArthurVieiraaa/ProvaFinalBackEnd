@@ -3,6 +3,7 @@ const database = require("./config/database");
 const app = express();
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpecs = require('./docs/swagger');
+const cors = require('cors');
 
 // ROTAS
 const UserRoutes = require("./routes/userRoutes");
@@ -12,6 +13,11 @@ const OrderRoutes = require("./routes/orderRoutes");
 
 
 app.use(express.json());
+app.use(cors({
+    origin: '*', // Permite requisições de qualquer origem
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos permitidos
+    allowedHeaders: ['Content-Type', 'Authorization'] // Cabeçalhos permitidos
+}));
 
 app.get('/', (req, res) => {
     res.send("Starting Page");

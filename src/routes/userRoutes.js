@@ -43,6 +43,59 @@
 
 /**
  * @swagger
+ * /api/users/login:
+ *   post:
+ *     tags: [Users]
+ *     summary: Login do usuário
+ *     description: Realiza a autenticação do usuário e retorna um token JWT.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: joao@gmail.com
+ *               password:
+ *                 type: string
+ *                 example: QWEasd123456
+ *     responses:
+ *       200:
+ *         description: Login realizado com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                   description: Token JWT gerado
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                     name:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *       400:
+ *         description: Email e senha são obrigatórios
+ *       401:
+ *         description: Senha inválida
+ *       404:
+ *         description: Usuário não encontrado
+ *       500:
+ *         description: Erro ao fazer login
+ */
+
+/**
+ * @swagger
  * /api/users/{id}:
  *   get:
  *     tags: [Users]
@@ -102,6 +155,7 @@ const express = require("express");
 const UserController = require("../controllers/userController");
 const router = express.Router();
 
+router.post("/login", UserController.login); 
 router.post("/", UserController.createUser);
 router.get("/", UserController.listUsers);
 router.get("/:id", UserController.findById);

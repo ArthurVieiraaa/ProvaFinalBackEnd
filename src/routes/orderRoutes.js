@@ -18,10 +18,6 @@
  *           schema:
  *             type: object
  *             properties:
- *               userId:
- *                 type: string
- *                 description: ID do usuário que fez o pedido
- *                 example: "64a5d7a7c5f20a001c78a111"
  *               total:
  *                 type: number
  *                 description: Valor total do pedido
@@ -108,9 +104,12 @@
  */
 
 
+
 const express = require('express');
 const OrderController = require('../controllers/orderController');
 const router = express.Router();
+const isAuthenticated = require('../middlewares/auth');
+router.use(isAuthenticated); 
 
 router.post('/', OrderController.createOrder);
 router.get('/', OrderController.listOrders);

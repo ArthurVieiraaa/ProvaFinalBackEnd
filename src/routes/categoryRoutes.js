@@ -98,6 +98,9 @@
 const express = require('express');
 const CategoryController = require('../controllers/categoryController');
 const router = express.Router();
+const isAtuthenticated = require('../middlewares/auth');
+
+router.use(isAtuthenticated); 
 
 router.post('/', CategoryController.createCategory);
 router.get('/', CategoryController.listCategory);
