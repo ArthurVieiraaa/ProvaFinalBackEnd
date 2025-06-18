@@ -1,60 +1,64 @@
-const Order = require("../models/order");
-const Product = require("../models/product");
-const User = require("../models/user");
-const OrderProduct = require("../models/orderProduct");
+const { Order, Product, User, OrderProduct } = require('../models');
 
 class OrderController {
   static async createOrder(req, res) {
-  try {
-    const { total, status, products } = req.body;
+    try {
+      const { total, products } = req.body;
 
-    if (!total)
-      return res.status(400).json({ error: "O total é obrigatório" });
-    if (!products || !Array.isArray(products) || products.length === 0) {
-      return res.status(400).json({ error: "A lista de produtos é obrigatória" });
-    }
-
-    const userId = req.user.id;
-
-    const order = await Order.create({
-      idUser: userId,
-      total,
-      status: status || "pendente",
-    });
-
-    for (const p of products) {
-      const product = await Product.findByPk(p.idProduct);
-      if (!product) {
-        return res.status(400).json({ error: `Produto ID ${p.idProduct} não encontrado` });
+      if (!total) {
+        return res.status(400).json({ error: "O total é obrigatório" });
+      }
+      if (!products || !Array.isArray(products) || products.length === 0) {
+        return res
+          .status(400)
+          .json({ error: "A lista de produtos é obrigatória" });
       }
 
-      await OrderProduct.create({
-        idOrder: order.idOrder || order.id, // ← Correção aqui
-        idProduct: p.idProduct,
-        quantity: p.quantity || 1,
-        price: product.price,
+      const userId = req.user.id;
+
+      const order = await Order.create({
+        idUser: userId,
+        total,
+        status: req.body.status || "pendente",
+      });
+
+      for (const p of products) {
+        const product = await Product.findByPk(p.productId);
+
+        if (!product) {
+          return res
+            .status(400)
+            .json({ error: `Produto com ID ${p.productId} não encontrado` });
+        }
+
+        await OrderProduct.create({
+          orderId: order.id,
+          productId: p.productId,
+          quantity: p.quantity || 1,
+          price: product.price,
+        });
+      }
+
+      const createdOrder = await Order.findByPk(order.id, {
+        include: [
+          {
+            model: Product,
+            as: "products",
+            through: { attributes: ["quantity", "price"] },
+          },
+        ],
+      });
+
+      return res.status(201).json(createdOrder);
+    } catch (error) {
+      console.error(error);
+      return res.status(400).json({
+        error: "Erro ao criar pedido",
+        detalhes: error.message,
       });
     }
-
-    const createdOrder = await Order.findByPk(order.idOrder || order.id, {
-      include: [
-        {
-          model: Product,
-          as: "products", // ← use 'as' se usou no belongsToMany
-          through: { attributes: ["quantity", "price"] }
-        }
-      ]
-    });
-
-    return res.status(201).json(createdOrder);
-
-  } catch (error) {
-    return res.status(400).json({
-      error: "Erro ao criar pedido",
-      detalhes: error.message,
-    });
   }
-}
+
   static async listOrders(req, res) {
     try {
       const orders = await Order.findAll({
@@ -76,7 +80,21 @@ class OrderController {
   static async findById(req, res) {
     const { id } = req.params;
     try {
-      const order = await Order.findByPk(id);
+      const order = await Order.findByPk(id, {
+        include: [
+          { model: User, as: "user", attributes: ["id", "name", "email"] },
+          {
+            model: Product,
+            as: "products",
+            through: { attributes: ["quantity", "price"] },
+          },
+        ],
+      });
+
+      if (!order) {
+        return res.status(404).json({ error: "Pedido não encontrado" });
+      }
+
       return res.status(200).json(order);
     } catch (error) {
       return res.status(400).json({ error: "Erro ao buscar pedido" });
@@ -85,17 +103,31 @@ class OrderController {
 
   static async updateOrder(req, res) {
     const { id } = req.params;
-    const { userId, productId } = req.body;
+    const { status } = req.body;
+
+    if (!status) {
+      return res.status(400).json({ error: "O campo 'status' é obrigatório." });
+    }
+
     try {
       const order = await Order.findByPk(id);
       if (!order) {
         return res.status(404).json({ error: "Pedido não encontrado" });
       }
-      order.userId = userId;
-      order.productId = productId;
+
+      order.status = status;
       await order.save();
-      return res.status(200).json(order);
+
+      const updatedOrder = await Order.findByPk(id, {
+        include: [
+          { model: Product, as: "products" },
+          { model: User, as: "user" },
+        ],
+      });
+
+      return res.status(200).json(updatedOrder);
     } catch (error) {
+      console.error("Erro ao atualizar pedido:", error);
       return res.status(400).json({ error: "Erro ao atualizar pedido" });
     }
   }

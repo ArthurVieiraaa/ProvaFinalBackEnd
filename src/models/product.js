@@ -9,17 +9,17 @@ const Product = database.db.define("products", {
   },
   name: {
     type: Sequelize.STRING,
-    allowNull: false, // Boa prática adicionar
+    allowNull: false,
   },
   price: {
     type: Sequelize.DECIMAL(10, 2),
-    allowNull: false, // Boa prática adicionar
+    allowNull: false,
   },
   idCategory: {
     type: Sequelize.INTEGER,
     allowNull: false,
     references: {
-      model: 'categories', // Nome da TABELA
+      model: 'categories',
       key: 'id'
     }
   }

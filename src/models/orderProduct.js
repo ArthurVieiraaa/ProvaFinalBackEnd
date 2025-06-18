@@ -12,7 +12,7 @@ const OrderProduct = database.db.define("orderProducts", {
     allowNull: false,
     references: {
       model: "orders",
-      key: "id", // CORRIGIDO de "idOrder" para "id"
+      key: "id",
     },
   },
   productId: {
@@ -20,7 +20,7 @@ const OrderProduct = database.db.define("orderProducts", {
     allowNull: false,
     references: {
       model: "products",
-      key: "id", // CORRIGIDO de "idProduct" para "id"
+      key: "id",
     },
   },
   quantity: {

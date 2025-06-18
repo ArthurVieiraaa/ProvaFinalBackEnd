@@ -14,14 +14,15 @@ const OrderRoutes = require("./routes/orderRoutes");
 
 app.use(express.json());
 app.use(cors({
-    origin: '*', // Permite requisições de qualquer origem
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos permitidos
-    allowedHeaders: ['Content-Type', 'Authorization'] // Cabeçalhos permitidos
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 app.get('/', (req, res) => {
     res.send("Starting Page");
 });
+
 
 app.use('/api/users', UserRoutes);
 app.use('/api/categories', CategoryRoutes);

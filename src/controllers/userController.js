@@ -10,7 +10,11 @@ class UserController {
       const email = req.body.email;
       const password = req.body.password;
       const hashedPassword = await bcrypt.hash(password, 10);
-      const newUser = await User.create({ name, email, password: hashedPassword });
+      const newUser = await User.create({
+        name,
+        email,
+        password: hashedPassword,
+      });
       return res.status(201).json(newUser);
     } catch (error) {
       return res.status(400).json({ error: "Erro ao criar usuário" });
@@ -58,12 +62,14 @@ class UserController {
   }
   static async deleteUser(req, res) {
     const { id } = req.params;
-    const user = await User.findByPk(id);
     try {
-      await user.destroy();
+      const user = await User.findByPk(id);
+
       if (!user) {
         return res.status(404).json({ error: "Usuário não encontrado" });
       }
+
+      await user.destroy();
       return res
         .status(200)
         .send({ success: true, message: "Usuário deletado com sucesso" });
