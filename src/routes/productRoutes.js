@@ -43,7 +43,7 @@
  *               $ref: '#/components/schemas/Product'
  *       400:
  *         description: Erro ao criar produto
- * 
+ *
  *   get:
  *     tags: [Products]
  *     summary: Listar todos os produtos
@@ -81,7 +81,7 @@
  *               $ref: '#/components/schemas/Product'
  *       404:
  *         description: Produto não encontrado
- * 
+ *
  *   put:
  *     tags: [Products]
  *     summary: Atualizar produto
@@ -116,7 +116,7 @@
  *         description: Produto atualizado com sucesso
  *       400:
  *         description: Erro ao atualizar produto
- * 
+ *
  *   delete:
  *     tags: [Products]
  *     summary: Excluir produto
@@ -154,16 +154,16 @@
  *           example: 1
  */
 
-const express = require('express');
-const ProductController = require('../controllers/productController');
+const express = require("express");
+const ProductController = require("../controllers/productController");
 const router = express.Router();
-const isAuthenticated = require('../middlewares/auth');
-router.use(isAuthenticated); 
+const isAuthenticated = require("../middlewares/auth");
+router.use(isAuthenticated);
 
-router.post('/', ProductController.createProduct);
-router.get('/', ProductController.listProducts);
-router.get('/:id', ProductController.findById);
-router.put('/:id', ProductController.updateProduct);
-router.delete('/:id', ProductController.deleteProduct);
+router.post("/", ProductController.createProduct);
+router.get("/", ProductController.listProducts);
+router.get("/:id", ProductController.findById);
+router.put("/:id", ProductController.updateProduct);
+router.delete("/:id", ProductController.deleteProduct);
 
 module.exports = router;
